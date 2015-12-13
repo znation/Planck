@@ -122,6 +122,7 @@ int Planck::run() {
     SDL_RenderPresent(renderer);
   }
 
+  TTF_Quit();
   SDL_Quit();
   return 0;
 }

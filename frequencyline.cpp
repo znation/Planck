@@ -49,8 +49,6 @@ int FrequencyLine::render(SDL_Renderer *renderer) {
     size_t y = static_cast<size_t>(
       std::round(bottom - (scalar * (bottom - top)))
     );
-    std::cout << "Drawing point ";
-    std::cout << i << ", " << y << "." << std::endl;
     if ((err = SDL_RenderDrawPoint(renderer, i, y)) != 0) {
       return err;
     }
