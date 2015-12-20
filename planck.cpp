@@ -105,7 +105,7 @@ int Planck::run() {
     std::ostringstream ss;
     ss << fps.get();
     ss << " fps";
-    SDL_Texture *image = renderText(ss.str(), "./System San Francisco Display Regular.ttf",
+    SDL_Texture *image = renderText(ss.str(), "./SourceSansPro-Regular.ttf",
       color, 14, renderer);
     if (image == nullptr) {
       TTF_Quit();
