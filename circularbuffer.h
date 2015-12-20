@@ -1,3 +1,6 @@
+#ifndef _circularbuffer_h
+#define _circularbuffer_h
+
 #include <vector>
 
 template<typename T, size_t SIZE>
@@ -15,3 +18,5 @@ class CircularBuffer {
       return ret;
     }
 };
+
+#endif

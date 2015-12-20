@@ -1,5 +1,6 @@
 #include "constants.h"
 #include "fps.h"
+#include "frame.h"
 #include "frequencyline.h"
 #include "planck.h"
 
@@ -71,7 +72,7 @@ int Planck::run() {
     return 2;
   }
 
-  SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+  SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (renderer == nullptr){
     SDL_DestroyWindow(win);
     std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
@@ -119,6 +120,7 @@ int Planck::run() {
     SDL_RenderClear(renderer);
     renderTexture(image, renderer, 10, 10);
     if (line.render(renderer) != 0) { return 6; }
+
     SDL_RenderPresent(renderer);
   }
 
