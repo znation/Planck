@@ -1,21 +1,21 @@
 #ifndef _frame_h
 #define _frame_h
 
-#include "circularbuffer.h"
 #include "constants.h"
 
-// TODO needs locking for thread safety?
-class TimeDomainSample : std::pair<float, float> {
-  private:
-    void init(float left, float right);
+#include <SDL.h>
 
+#include "channel.h"
+
+class Frame {
   public:
-    TimeDomainSample();
-    TimeDomainSample(float left, float right);
-    float left() const;
-    float right() const;
+    Channel left;
+    Channel right;
+    void insert(size_t i, float leftValue, float rightValue);
 };
 
-typedef CircularBuffer<TimeDomainSample, SAMPLES_PER_SECOND> Frame;
+class TimeDomainFrame : public Frame {};
+
+class FrequencyDomainFrame : public Frame {};
 
 #endif

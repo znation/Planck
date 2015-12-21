@@ -4,8 +4,6 @@
 #include <cassert>
 #include <iostream>
 
-static const size_t CHANNEL_COUNT = 2;
-static const size_t FRAMES_PER_BUFFER = 200;
 
 static int record( const void *inputBuffer,
         void *outputBuffer,
@@ -13,14 +11,14 @@ static int record( const void *inputBuffer,
         const PaStreamCallbackTimeInfo* timeInfo,
         PaStreamCallbackFlags statusFlags,
         void *userData ) {
-  assert(framesPerBuffer == FRAMES_PER_BUFFER);
-  Frame *m_frame = static_cast<Frame*>(userData);
+  assert(framesPerBuffer == SAMPLES_PER_FRAME);
+  TimeDomainFrame *m_frame = static_cast<TimeDomainFrame*>(userData);
   const float *rptr = static_cast<const float*>(inputBuffer);
   assert(CHANNEL_COUNT == 2);
-  for (size_t i=0; i<FRAMES_PER_BUFFER; i++) {
+  for (size_t i=0; i<SAMPLES_PER_FRAME; i++) {
     float left = *rptr++;
     float right = *rptr++;
-    m_frame->insert(TimeDomainSample(left, right));
+    m_frame->insert(i, left, right);
   }
   return 0;
 }
@@ -53,7 +51,7 @@ Mic::Mic() {
     &inputParameters,
     NULL,                  /* &outputParameters, */
     SAMPLES_PER_SECOND,
-    FRAMES_PER_BUFFER,
+    SAMPLES_PER_FRAME,
     paClipOff,      /* we won't output out of range samples so don't bother clipping them */
     record,
     static_cast<void *>(&m_frame) ));
@@ -68,6 +66,6 @@ Mic::~Mic() {
   Pa_Terminate();
 }
 
-const Frame& Mic::sample() const {
+TimeDomainFrame Mic::sample() const {
   return m_frame;
 }

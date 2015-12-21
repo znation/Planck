@@ -1,7 +1,6 @@
 #include "constants.h"
 #include "fps.h"
 #include "frame.h"
-#include "frequencyline.h"
 #include "planck.h"
 
 #include "SDL_ttf.h"
@@ -90,7 +89,6 @@ int Planck::run() {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_real_distribution<double> real;
-  FrequencyLine line(SCREEN_WIDTH, 0.0, 1.0, 0.0, 1.0);
 
   while (m_running) {
     while (SDL_PollEvent(&event)) {
@@ -112,14 +110,14 @@ int Planck::run() {
       SDL_Quit();
       return 5;
     }
-    double freq = real(gen);
-    line.addPoint(freq, freq * freq);
+
+    TimeDomainFrame frame = m_mic.sample();
 
     // render
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
     renderTexture(image, renderer, 10, 10);
-    if (line.render(renderer) != 0) { return 6; }
+    if (frame.left.render(renderer) != 0) { return 6; }
 
     SDL_RenderPresent(renderer);
   }
