@@ -7,10 +7,23 @@
 #include <cassert>
 #include <complex>
 
-const static std::complex<float> PI(std::acos(-1.0), 0.0);
+const static float PI = std::acos(-1.0);
+const static std::complex<float> complex_PI(PI, 0.0);
 const static std::complex<float> i(0.0, 1.0);
 const static std::complex<float> neg_two(-2.0, 0.0);
-const static std::complex<float> neg_two_pi_I = i * neg_two * PI;
+const static std::complex<float> neg_two_pi_I = i * neg_two * complex_PI;
+
+Channel hammingWindow(const Channel& input) {
+  const float alpha = 0.54;
+  const float beta = 1.0 - alpha;
+  Channel output(input.size(), 0.0);
+  for (size_t i=0; i<input.size(); i++) {
+    output[i] = input[i] * (alpha - (beta *
+          std::cos((2.0 * PI * static_cast<float>(i)) /
+            static_cast<float>(input.size() - 1))));
+  }
+  return output;
+}
 
 std::vector<std::complex<float>> fft(const float* input, size_t n, size_t s) {
   if (n == 1) {
@@ -33,12 +46,13 @@ std::vector<std::complex<float>> fft(const float* input, size_t n, size_t s) {
 
 Channel fft(const Channel& input) {
   size_t n = input.size();
-  std::vector<std::complex<float>> output = fft(input.data(), n, 1);
-  assert(output.size() == input.size());
+  Channel windowed = hammingWindow(input);
+  std::vector<std::complex<float>> output = fft(windowed.data(), n, 1);
+  assert(output.size() == n);
   // throw away imaginary portion
   Channel realOutput(n/2, 0.0);
   for (size_t i=0; i<n/2; i++) {
-    realOutput[i] = output[i].real();
+    realOutput[i] = std::abs(output[i]);
   }
   return realOutput;
 }
