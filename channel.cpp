@@ -22,7 +22,7 @@ Channel::Channel() :
 {}
 Channel::Channel(size_t size, float value) : std::vector<float>(size, value) {}
 
-int Channel::render(SDL_Renderer* renderer) const {
+int Channel::render(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b) const {
   size_t err;
 
   Channel result = fft(*this);
@@ -38,13 +38,13 @@ int Channel::render(SDL_Renderer* renderer) const {
     size_t y = (SCREEN_HEIGHT - static_cast<size_t>(std::round(
       point * static_cast<float>(SCREEN_HEIGHT)
     ))) - 20;
-    if ((err = SDL_SetRenderDrawColor(renderer, 255, 150, 150, 150)) != 0) {
+    if ((err = SDL_SetRenderDrawColor(renderer, r, g, b, 150)) != 0) {
       return err;
     };
     if ((err = SDL_RenderDrawPoint(renderer, x, y)) != 0) {
       return err;
     }
-    if ((err = SDL_SetRenderDrawColor(renderer, 255, 150, 150, 75)) != 0) {
+    if ((err = SDL_SetRenderDrawColor(renderer, r, g, b, 75)) != 0) {
       return err;
     };
     if ((err = SDL_RenderDrawPoint(renderer, x+1, y)) != 0) {

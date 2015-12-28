@@ -15,7 +15,7 @@ class Channel : public std::vector<float> {
   public:
     Channel();
     Channel(size_t size, float value);
-    int render(SDL_Renderer* renderer) const;
+    int render(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b) const;
 };
 
 #endif

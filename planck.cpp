@@ -117,7 +117,7 @@ int Planck::run() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
     renderTexture(image, renderer, 10, 10);
-    if (frame.left.render(renderer) != 0) { return 6; }
+    if (frame.left.render(renderer, 255, 150, 150) != 0) { return 6; }
 
     SDL_RenderPresent(renderer);
   }
