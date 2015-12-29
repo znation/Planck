@@ -11,7 +11,4 @@ class Planck {
 
   public:
     int run();
-
-  private:
-
 };

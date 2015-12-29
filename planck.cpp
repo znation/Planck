@@ -1,6 +1,7 @@
 #include "constants.h"
 #include "frame.h"
 #include "planck.h"
+#include "ui/event.h"
 
 #include "SDL_ttf.h"
 
@@ -14,13 +15,24 @@ int Planck::run() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     throw SDL_GetError();
   }
-  SDL_Window *win = SDL_CreateWindow("Planck", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+  SDL_Window *win = SDL_CreateWindow(
+    "Planck",
+    SDL_WINDOWPOS_CENTERED,
+    SDL_WINDOWPOS_CENTERED,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    SDL_WINDOW_SHOWN
+  );
   if (win == nullptr) {
     SDL_Quit();
     throw SDL_GetError();
   }
 
-  SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  SDL_Renderer *renderer = SDL_CreateRenderer(win, -1,
+    SDL_RENDERER_ACCELERATED |
+    SDL_RENDERER_PRESENTVSYNC |
+    SDL_RENDERER_TARGETTEXTURE
+  );
   if (renderer == nullptr) {
     SDL_DestroyWindow(win);
     SDL_Quit();
@@ -42,17 +54,17 @@ int Planck::run() {
       if (event.type == SDL_QUIT) {
         m_running = false;
       }
+      Event::send(event);
     }
 
     // process loop logic
     TimeDomainFrame frame = m_mic.sample();
 
     // render
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
-    if (frame.left.render(renderer, 255, 150, 150) != 0) { return 6; }
     m_ui.render(renderer);
-
+    if (frame.left.render(renderer, 255, 150, 150) != 0) { return 6; }
     SDL_RenderPresent(renderer);
   }
 

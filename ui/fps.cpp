@@ -6,6 +6,42 @@
 #include <cmath>
 #include <sstream>
 
+// debug
+#include <iostream>
+
+// Changes a surface's alpha value, by altering per-pixel alpha if necessary.
+// from http://stackoverflow.com/a/12773144
+static void SetSurfaceAlpha(SDL_Surface *surface, Uint8 alpha)
+{
+  SDL_PixelFormat* fmt = surface->format;
+
+  unsigned bpp = fmt->BytesPerPixel;
+  // Scaling factor to clamp alpha to [0, alpha].
+  float scale = alpha / 255.0f;
+
+  SDL_LockSurface(surface);
+
+  for (int y = 0; y < surface->h; ++y)  {
+    for (int x = 0; x < surface->w; ++x) {
+      // Get a pointer to the current pixel.
+      Uint32* pixel_ptr = (Uint32 *)(
+              (Uint8 *)surface->pixels
+              + y * surface->pitch
+              + x * bpp
+              );
+
+      // Get the old pixel components.
+      Uint8 r, g, b, a;
+      SDL_GetRGBA( *pixel_ptr, fmt, &r, &g, &b, &a );
+
+      // Set the pixel with the new alpha.
+      *pixel_ptr = SDL_MapRGBA( fmt, r, g, b, scale * a );
+    }
+  }
+
+  SDL_UnlockSurface(surface);
+}
+
 static void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip = nullptr){
   SDL_RenderCopy(ren, tex, clip, &dst);
 }
@@ -18,7 +54,7 @@ static void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL
     dst.h = clip->h;
   }
   else {
-    SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+    SDL_QueryTexture(tex, nullptr, nullptr, &dst.w, &dst.h);
   }
   renderTexture(tex, ren, dst, clip);
 }
@@ -39,6 +75,8 @@ static SDL_Texture* renderText(const std::string &message, const std::string &fo
     TTF_CloseFont(font);
     throw "TTF_RenderText";
   }
+  SetSurfaceAlpha(surf, color.a);
+
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
   if (texture == nullptr){
     throw "CreateTexture";
@@ -73,9 +111,10 @@ size_t FPS::get() {
   return m_fps;
 }
 
-void FPS::render(SDL_Renderer *renderer) {
+void FPS::render(SDL_Renderer *renderer, double opacity) {
   size_t fps = this->get();
-  SDL_Color color = { 210, 210, 210, 255 };
+  uint8_t alpha = static_cast<uint8_t>(std::round(255.0 * opacity));
+  SDL_Color color = { 210, 210, 210, alpha };
   std::ostringstream ss;
   ss << fps;
   ss << " fps";

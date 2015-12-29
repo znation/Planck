@@ -13,7 +13,7 @@ class FPS {
     size_t get();
 
   public:
-    void render(SDL_Renderer *renderer);
+    void render(SDL_Renderer *renderer, double opacity);
 };
 
 #endif
