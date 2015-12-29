@@ -11,7 +11,7 @@ CXXFLAGS=\
 
 all: planck
 
-planck: *.cpp input/*.cpp
+planck: *.cpp input/*.cpp ui/*.cpp
 
 clean:
 	rm -rf planck *.o
