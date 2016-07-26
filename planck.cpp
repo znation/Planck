@@ -58,7 +58,7 @@ int Planck::run() {
     }
 
     // process loop logic
-    TimeDomainFrame frame = m_mic.sample();
+    TimeDomainFrame frame = m_inputManager->sample();
 
     // render
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);

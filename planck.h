@@ -1,4 +1,4 @@
-#include "input/mic.h"
+#include "input/inputmanager.h"
 #include "ui/ui.h"
  
 #include <SDL.h>
@@ -6,7 +6,7 @@
 class Planck {
   private:
     bool m_running = true;
-    Mic m_mic;
+    InputManager m_inputManager;
     UI m_ui;
 
   public:

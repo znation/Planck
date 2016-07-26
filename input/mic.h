@@ -1,8 +1,6 @@
-#include "../frame.h"
+#include "input.h"
 
-#include <portaudio.h>
-
-class Mic {
+class Mic : public Input {
   private:
     TimeDomainFrame m_frame;
     PaStream *m_stream;
@@ -10,9 +8,5 @@ class Mic {
   public:
     Mic();
     ~Mic();
-    Mic(const Mic&) = delete;
-    Mic& operator=(const Mic&) = delete;
-    Mic(const Mic&&) = delete;
-    Mic& operator=(const Mic&&) = delete;
-    TimeDomainFrame sample() const;
+    virtual TimeDomainFrame sample() const;
 };
